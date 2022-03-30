@@ -1,39 +1,41 @@
-import React, {ReactElement} from 'react';
-import {TextInput} from 'react-native';
+import React, {useEffect} from 'react';
+import {TextInput, Text} from 'react-native';
 import styled from 'styled-components/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import RootStackParamList from 'src/types/RootStackParamList';
+import RootStackParamList from '../../types/RootStackParamList';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
-type AuthorizationProps = NativeStackScreenProps<
+
+type RegistrationProps = NativeStackScreenProps<
   RootStackParamList,
-  'Authorization'
+  'Registration'
 >;
 
-const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
+const RegScreen: React.FC<RegistrationProps> = ({navigation}) => {
   interface IFormInputs {
     email: string;
     password: string;
+    name: string;
   }
 
   const {
     control,
     handleSubmit,
+    setError,
     formState: {errors},
   } = useForm<IFormInputs>({
     defaultValues: {
       email: '',
       password: '',
+      name: '',
     },
   });
-  const onSubmit: SubmitHandler<IFormInputs> = data => {
-    console.log(data);
-    navigation.navigate('Desks');
-  };
+
+  const onSubmit: SubmitHandler<IFormInputs> = data => {};
   return (
     <AuthScreenWrapper>
       <InputsContainer>
-        <Title>Field data</Title>
+        <Title>Fill in the fields</Title>
         <InputsWrapper>
           <InputWrapper>
             <ErrorMessage
@@ -60,6 +62,38 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
               render={({field: {onChange, onBlur, value}}) => (
                 <EmailInput
                   placeholder="Enter a email"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <ErrorMessage
+              errors={errors}
+              name="name"
+              render={({message}) => {
+                switch (errors.password!.type) {
+                  case 'required':
+                    return <ErrorText>This field is required</ErrorText>;
+                  case 'minLength':
+                    return <ErrorText>Too short</ErrorText>;
+                  default:
+                    return <ErrorText>{null}</ErrorText>;
+                }
+              }}
+            />
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: true,
+                minLength: 3,
+              }}
+              render={({field: {onChange, onBlur, value}}) => (
+                <NameInput
+                  placeholder="Enter your name"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
@@ -101,10 +135,10 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
           </InputWrapper>
         </InputsWrapper>
         <SubmitButton title="Submit" onPress={handleSubmit(onSubmit)} />
-        <RegistrationRefWrapper
-          onPress={() => navigation.navigate('Registration')}>
-          <RegistrationRef>I don't have an account</RegistrationRef>
-        </RegistrationRefWrapper>
+        <AuthorizationRefWrapper
+          onPress={() => navigation.navigate('Authorization')}>
+          <AuthorizationRef>I have an account</AuthorizationRef>
+        </AuthorizationRefWrapper>
       </InputsContainer>
     </AuthScreenWrapper>
   );
@@ -146,15 +180,16 @@ const ErrorText = styled.Text`
   font-family: 'SF-UI-Text-Regular';
 `;
 const PasswordInput = styled(EmailInput)``;
+const NameInput = styled(EmailInput)``;
 const SubmitButton = styled.Button``;
-const RegistrationRefWrapper = styled.TouchableOpacity`
+const AuthorizationRefWrapper = styled.TouchableOpacity`
   width: 100%;
   align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
 `;
-const RegistrationRef = styled.Text`
+const AuthorizationRef = styled.Text`
   font-family: 'SF-UI-Text-Regular';
   color: gray;
 `;
-export default AuthScreen;
+export default RegScreen;

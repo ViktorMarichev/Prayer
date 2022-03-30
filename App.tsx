@@ -18,6 +18,7 @@ import TasksList from '@components/TasksList/index';
 import AuthScreen from '@components/AuthScreen/index';
 import DetailsScreen from '@components/DetailsScreen/index';
 import SettingsScreen from '@components/SettingsScreen';
+import RegistrationScreen from '@components/RegScreen/index';
 import RootStackParamList from 'src/types/RootStackParamList';
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const App: React.FC = () => {
@@ -27,12 +28,13 @@ const App: React.FC = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Tasks">
+        initialRouteName="Authorization">
         <RootStack.Screen name="Desks" component={DeskList} />
         <RootStack.Screen name="Tasks" component={TasksList} />
         <RootStack.Screen name="Details" component={DetailsScreen} />
         <RootStack.Screen name="Authorization" component={AuthScreen} />
         <RootStack.Screen name="Settings" component={SettingsScreen} />
+        <RootStack.Screen name="Registration" component={RegistrationScreen} />
       </RootStack.Navigator>
     </NavigationContainer>
   );

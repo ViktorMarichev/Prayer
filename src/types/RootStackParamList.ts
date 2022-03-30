@@ -4,5 +4,6 @@ type RootStackParamList = {
   Details: undefined;
   Authorization: undefined;
   Settings: undefined;
+  Registration: undefined;
 };
 export default RootStackParamList;

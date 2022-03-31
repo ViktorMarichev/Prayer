@@ -1,10 +1,11 @@
-import React, {ReactElement} from 'react';
-import {TextInput} from 'react-native';
+import React, {useEffect} from 'react';
+import {TextInput, Text} from 'react-native';
 import styled from 'styled-components/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import RootStackParamList from 'src/types/RootStackParamList';
+import RootStackParamList from '../../types/RootStackParamList';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
+
 type AuthorizationProps = NativeStackScreenProps<
   RootStackParamList,
   'Authorization'
@@ -19,6 +20,7 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: {errors},
   } = useForm<IFormInputs>({
     defaultValues: {
@@ -28,7 +30,6 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
   });
   const onSubmit: SubmitHandler<IFormInputs> = data => {
     console.log(data);
-    navigation.navigate('Desks');
   };
   return (
     <AuthScreenWrapper>

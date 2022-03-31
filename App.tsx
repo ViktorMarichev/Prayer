@@ -21,7 +21,7 @@ import SettingsScreen from '@components/SettingsScreen';
 import RegistrationScreen from '@components/RegScreen/index';
 import RootStackParamList from 'src/types/RootStackParamList';
 import {Provider} from 'react-redux';
-import store from '../../redux/store';
+import store from 'src/redux/store';
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const App: React.FC = () => {
   return (

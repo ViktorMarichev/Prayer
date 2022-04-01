@@ -3,11 +3,13 @@ import createSagaMiddleware from 'redux-saga';
 import {TypedUseSelectorHook, useSelector, useDispatch} from 'react-redux';
 import UserReducer from './User/index';
 import columnsReducer from './Columns/index';
+import PrayersSlice from './Prayers/index';
 import rootSaga from './sagas';
 const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
   user: UserReducer,
   columns: columnsReducer,
+  prayers: PrayersSlice,
 });
 const store = configureStore({
   reducer: rootReducer,

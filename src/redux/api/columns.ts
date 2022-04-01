@@ -5,7 +5,7 @@ type columnsParams = {
 export const Columns = {
   getAll: function (params: columnsParams = {}) {
     const {token} = params;
-    const api = apiInstance();
+    const api = apiInstance({token});
     return api.get('/columns', {
       params: {token},
     });

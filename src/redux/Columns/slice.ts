@@ -7,7 +7,7 @@ const ColumnsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [getColumns.SUCCESS]: (state, action) => {
-      return action.payload.columns;
+      return (state = action.payload);
     },
     [getColumns.FAILURE]: (state, action) => {
       return {message: action.payload.message};

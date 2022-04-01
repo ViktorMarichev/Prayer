@@ -30,15 +30,16 @@ function* signInWorker(action: signInAction) {
 }
 function* getColumnsWorker(action: getColumnsAction) {
   const {token} = action.payload;
+
   const {success, failure} = getColumns;
   try {
     // запросить токен, получить его, а затем попытаться запросить данные
-    const {data: authData} = yield call(Columns.getAll, {token});
+    const {data: columnsArray} = yield call(Columns.getAll, {token});
     // в случае успеха отдать данные редьюсеру
-    if (authData.message) {
-      yield put(failure({message: authData.message}));
+    if (columnsArray.message) {
+      yield put(failure({message: columnsArray.message}));
     } else {
-      yield put(success(authData));
+      yield put(success(columnsArray));
     }
   } catch (error) {
     // ошибку можно тоже отдать редьюсеру через вызов failure

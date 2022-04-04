@@ -33,7 +33,7 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
   return (
     <AuthScreenWrapper>
       <InputsContainer>
-        <Title>Field data</Title>
+        <Title>Authorisation</Title>
         <InputsWrapper>
           <InputWrapper>
             <ErrorMessage
@@ -100,7 +100,10 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
             />
           </InputWrapper>
         </InputsWrapper>
-        <SubmitButton title="Submit" onPress={handleSubmit(onSubmit)} />
+        <ButtonWrapper>
+          <SubmitButton title="Submit" onPress={handleSubmit(onSubmit)} />
+        </ButtonWrapper>
+
         <RegistrationRefWrapper
           onPress={() => navigation.navigate('Registration')}>
           <RegistrationRef>I don't have an account</RegistrationRef>
@@ -131,21 +134,27 @@ const Title = styled.Text`
   width: 100%;
   font-family: 'SF-UI-Text-Regular';
   text-align: center;
+  color: black;
   font-size: 17px;
 `;
 const InputWrapper = styled.View`
   margin-top: 5px;
 `;
 const EmailInput = styled.TextInput`
+  height: 45px;
   border: 1px solid gray;
   border-radius: 15px;
   background-color: white;
+  color: black;
 `;
 const ErrorText = styled.Text`
   color: red;
   font-family: 'SF-UI-Text-Regular';
 `;
 const PasswordInput = styled(EmailInput)``;
+const ButtonWrapper = styled.View`
+  padding: 0px 20px 0px 20px;
+`;
 const SubmitButton = styled.Button``;
 const RegistrationRefWrapper = styled.TouchableOpacity`
   width: 100%;

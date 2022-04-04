@@ -20,12 +20,9 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
   }
   const dispatch = useAppDispatch();
   const userData = useAppSelector(state => UserSelectors.userData(state));
-  useEffect(() => {
-    if (userData.token) {
-      navigation.navigate('Desks');
-    }
-  }, [userData]);
+
   const {
+    setError,
     control,
     handleSubmit,
     formState: {errors},
@@ -35,6 +32,16 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
       password: '',
     },
   });
+  useEffect(() => {
+    if (userData.message) {
+      setError('email', {
+        type: 'NotFound',
+      });
+    }
+    if (userData.token) {
+      navigation.navigate('Desks');
+    }
+  }, [userData]);
   const onSubmit: SubmitHandler<IFormInputs> = data => {
     console.log(data);
     dispatch(login(data));
@@ -54,6 +61,8 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
                     return <ErrorText>This field is required</ErrorText>;
                   case 'pattern':
                     return <ErrorText>This is not email</ErrorText>;
+                  case 'NotFound':
+                    return <ErrorText>Uncorrected login or password</ErrorText>;
                   default:
                     return <ErrorText>{errors.email!.type}</ErrorText>;
                 }

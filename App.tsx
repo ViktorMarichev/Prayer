@@ -20,23 +20,30 @@ import DetailsScreen from '@components/DetailsScreen/index';
 import SettingsScreen from '@components/SettingsScreen';
 import RegistrationScreen from '@components/RegScreen/index';
 import RootStackParamList from 'src/types/RootStackParamList';
+import {Provider} from 'react-redux';
+import store from 'src/redux/store';
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const App: React.FC = () => {
   return (
-    <NavigationContainer>
-      <RootStack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName="Authorization">
-        <RootStack.Screen name="Desks" component={DeskList} />
-        <RootStack.Screen name="Tasks" component={TasksList} />
-        <RootStack.Screen name="Details" component={DetailsScreen} />
-        <RootStack.Screen name="Authorization" component={AuthScreen} />
-        <RootStack.Screen name="Settings" component={SettingsScreen} />
-        <RootStack.Screen name="Registration" component={RegistrationScreen} />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <RootStack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+          initialRouteName="Authorization">
+          <RootStack.Screen name="Desks" component={DeskList} />
+          <RootStack.Screen name="Tasks" component={TasksList} />
+          <RootStack.Screen name="Details" component={DetailsScreen} />
+          <RootStack.Screen name="Authorization" component={AuthScreen} />
+          <RootStack.Screen name="Settings" component={SettingsScreen} />
+          <RootStack.Screen
+            name="Registration"
+            component={RegistrationScreen}
+          />
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 export default App;

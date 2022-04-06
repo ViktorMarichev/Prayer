@@ -1,10 +1,13 @@
-import React, {ReactElement} from 'react';
+import React, {ReactElement, useEffect} from 'react';
 import {TextInput} from 'react-native';
 import styled from 'styled-components/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from 'src/types/RootStackParamList';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
+import {useAppDispatch, useAppSelector} from '../../redux/store';
+import {UserSelectors} from '../../redux/User/index';
+import {login} from '../../redux/User/index';
 type AuthorizationProps = NativeStackScreenProps<
   RootStackParamList,
   'Authorization'
@@ -15,8 +18,11 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
     email: string;
     password: string;
   }
+  const dispatch = useAppDispatch();
+  const userData = useAppSelector(state => UserSelectors.userData(state));
 
   const {
+    setError,
     control,
     handleSubmit,
     formState: {errors},
@@ -26,9 +32,19 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
       password: '',
     },
   });
+  useEffect(() => {
+    if (userData.message) {
+      setError('email', {
+        type: 'NotFound',
+      });
+    }
+    if (userData.token) {
+      navigation.navigate('Desks');
+    }
+  }, [userData]);
   const onSubmit: SubmitHandler<IFormInputs> = data => {
     console.log(data);
-    navigation.navigate('Desks');
+    dispatch(login(data));
   };
   return (
     <AuthScreenWrapper>
@@ -45,6 +61,8 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
                     return <ErrorText>This field is required</ErrorText>;
                   case 'pattern':
                     return <ErrorText>This is not email</ErrorText>;
+                  case 'NotFound':
+                    return <ErrorText>Uncorrected login or password</ErrorText>;
                   default:
                     return <ErrorText>{errors.email!.type}</ErrorText>;
                 }

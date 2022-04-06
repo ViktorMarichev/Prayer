@@ -9,30 +9,31 @@
  */
 
 import {JSXElement} from '@babel/types';
-import React, {Component, ReactNode} from 'react';
+import React, {Component, ReactNode, useEffect, useState} from 'react';
 import {} from 'react-native';
 import styled from 'styled-components/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from 'src/types/RootStackParamList';
 import SvgUnion from '@svg/Union';
+import {getColumns} from '../../redux/Columns/index';
+import {useAppDispatch, useAppSelector} from '../../redux/store';
+import {columnsSelector} from '../../redux/Columns/index';
+import {UserSelectors} from '../../redux/User/index';
 type DeskListItemPropsNavigatior = NativeStackScreenProps<
   RootStackParamList,
   'Desks'
 >;
 type DeskListItemNavigationProp = DeskListItemPropsNavigatior['navigation'];
 type DeskItemType = {
-  key: string;
+  id: number;
+  userId: number;
   title: string;
+  description: string | null;
 };
 type DeskListItemProps = {
   item: DeskItemType;
   navigation: DeskListItemNavigationProp;
 };
-const deskListItems: DeskItemType[] = [
-  {key: 'item1', title: 'To do'},
-  {key: 'item2', title: 'In Process'},
-  {key: 'item3', title: 'Completed'},
-];
 
 const DeskListItem: React.FC<DeskListItemProps> = ({item, navigation}) => {
   const onPressListItem = (item: DeskItemType) => {
@@ -46,6 +47,17 @@ const DeskListItem: React.FC<DeskListItemProps> = ({item, navigation}) => {
   );
 };
 const Desks: React.FC<DeskListItemPropsNavigatior> = ({navigation}) => {
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const columns: Array<DeskItemType> = useAppSelector(state =>
+    columnsSelector.getAll(state),
+  );
+  const token = useAppSelector(state => UserSelectors.userData(state).token);
+
+  useEffect(() => {
+    dispatch(getColumns({token}));
+    setLoaded(true);
+  }, [loaded]);
   return (
     <DeskContainer>
       <DeskHeader>
@@ -56,11 +68,11 @@ const Desks: React.FC<DeskListItemPropsNavigatior> = ({navigation}) => {
           <SvgUnion />
         </DeskImageWrapper>
       </DeskHeader>
+
       <DeskList<React.ElementType>
-        data={deskListItems}
-        keyExtractor={(item: DeskItemType, index: number) =>
-          `${item.title}-${index}`
-        }
+        data={columns}
+        keyExtractor={(item: DeskItemType) => `${item.title}-${item.id}`}
+        extraData={columns}
         renderItem={({item}: {item: DeskItemType}) => (
           <DeskListItem item={item} navigation={navigation} />
         )}

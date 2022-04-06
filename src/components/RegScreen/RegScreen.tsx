@@ -5,7 +5,8 @@ import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from '../../types/RootStackParamList';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {ErrorMessage} from '@hookform/error-message';
-
+import {UserSelectors, Registration, clearAuthSignUpDto} from 'src/redux/User';
+import {useAppSelector, useAppDispatch} from 'src/redux/store';
 type RegistrationProps = NativeStackScreenProps<
   RootStackParamList,
   'Registration'
@@ -30,8 +31,27 @@ const RegScreen: React.FC<RegistrationProps> = ({navigation}) => {
       name: '',
     },
   });
+  const dispatch = useAppDispatch();
+  const regQuery = useAppSelector(
+    state => UserSelectors.userData(state).authSignUpDto,
+  );
 
-  const onSubmit: SubmitHandler<IFormInputs> = data => {};
+  const onSubmit: SubmitHandler<IFormInputs> = data => {
+    dispatch(Registration(data));
+  };
+  useEffect(() => {
+    if (regQuery) {
+      if (regQuery!.message) {
+        setError('email', {
+          type: 'CustomError',
+          message: regQuery!.message,
+        });
+      } else {
+        dispatch(clearAuthSignUpDto());
+        navigation.navigate('Authorization');
+      }
+    }
+  }, [regQuery]);
   return (
     <AuthScreenWrapper>
       <InputsContainer>
@@ -47,6 +67,8 @@ const RegScreen: React.FC<RegistrationProps> = ({navigation}) => {
                     return <ErrorText>This field is required</ErrorText>;
                   case 'pattern':
                     return <ErrorText>This is not email</ErrorText>;
+                  case 'CustomError':
+                    return <ErrorText>{message}</ErrorText>;
                   default:
                     return <ErrorText>{errors.email!.type}</ErrorText>;
                 }

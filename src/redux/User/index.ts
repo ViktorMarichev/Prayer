@@ -1,4 +1,6 @@
 import UserReducer from './slice';
-export {login} from './slice';
-export {default as UserSelectors} from './selectors';
+import { actions } from './slice';
+export { login, Registration } from './slice';
+export const { clearAuthSignUpDto } = actions;
+export { default as UserSelectors } from './selectors';
 export default UserReducer;

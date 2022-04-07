@@ -8,8 +8,11 @@ import RootStackParamList from 'src/types/RootStackParamList';
 import MyPrayers from '@components/MyPrayers/index';
 import SubscribedPrayers from '@components/SubscribedPrayers/index';
 import StackContext from 'src/context/RootStackContext';
-const Tab = createMaterialTopTabNavigator();
+import TabStackParamList from 'src/types/TabStackParamList';
+const Tab = createMaterialTopTabNavigator<TabStackParamList>();
+
 type TasksProps = NativeStackScreenProps<RootStackParamList, 'Tasks'>;
+
 const TaskList: React.FC<TasksProps> = ({navigation}) => {
   return (
     <StackContext.Provider value={{navigation}}>

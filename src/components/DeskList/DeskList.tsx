@@ -38,7 +38,10 @@ type DeskListItemProps = {
 const DeskListItem: React.FC<DeskListItemProps> = ({item, navigation}) => {
   const onPressListItem = (item: DeskItemType) => {
     console.log(item);
-    navigation.navigate('Tasks');
+    navigation.navigate('Tasks', {
+      screen: 'MyPrayers',
+      params: {columnId: item.id},
+    });
   };
   return (
     <DeskItemWrapper onPress={() => onPressListItem(item)}>

@@ -28,10 +28,10 @@ const MyPrayers: React.FC<MyPrayersScreenProps> = ({route}) => {
   const dispatch = useAppDispatch();
   const token = useAppSelector(state => UserSelectors.userData(state).token);
   const prayersChecked = useAppSelector(state =>
-    prayersSelector.getCheckedPrayers(state),
+    prayersSelector.getCheckedPrayers(state, route.params.columnId),
   );
   const prayersNotChecked = useAppSelector(state =>
-    prayersSelector.getNotCheckedPrayers(state),
+    prayersSelector.getNotCheckedPrayers(state, route.params.columnId),
   );
   useEffect(() => {
     dispatch(getPrayers({token}));

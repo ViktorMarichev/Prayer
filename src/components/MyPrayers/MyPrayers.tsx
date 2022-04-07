@@ -3,9 +3,15 @@ import styled from 'styled-components/native';
 import ReactNative from 'react-native';
 import SvgUnion from '@svg/Union';
 import PrayerList from '@components/PrayerList';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Prayer from 'src/types/Prayer';
 import AnsweredButton from '@components/AnsweredButton/index';
-const MyPrayers: React.FC = () => {
+import TabScreenParamList from 'src/types/TabStackParamList';
+type MyPrayersScreenProps = NativeStackScreenProps<
+  TabScreenParamList,
+  'MyPrayers'
+>;
+const MyPrayers: React.FC<MyPrayersScreenProps> = ({route}) => {
   const [prayerInputValue, setPrayerInputValue] = useState<string>('');
   const [answeredPrayersIsShow, setAnseredPrayersIsShow] =
     useState<boolean>(false);

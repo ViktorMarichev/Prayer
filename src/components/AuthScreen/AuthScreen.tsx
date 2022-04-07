@@ -39,7 +39,7 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
       });
     }
     if (userData.token) {
-      navigation.navigate('Desks');
+      navigation.replace('Desks');
     }
   }, [userData]);
   const onSubmit: SubmitHandler<IFormInputs> = data => {

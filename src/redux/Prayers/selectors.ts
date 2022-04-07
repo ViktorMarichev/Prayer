@@ -1,17 +1,17 @@
-import {createSelector} from '@reduxjs/toolkit';
+import { createSelector } from '@reduxjs/toolkit';
 import Prayer from '../../types/Prayer';
-import {RootState} from '../store';
+import { RootState } from '../store';
 const getAll = (state: RootState) => {
   return state.prayers;
 };
-const getCheckedPrayers = (state: RootState) => {
+const getCheckedPrayers = (state: RootState, columnId: number) => {
   return state.prayers.filter((prayer: Prayer) => {
-    return prayer.checked;
+    return prayer.checked && prayer.columnId === columnId;
   });
 };
-const getNotCheckedPrayers = (state: RootState) => {
+const getNotCheckedPrayers = (state: RootState, columnId: number) => {
   return state.prayers.filter((prayer: Prayer) => {
-    return !prayer.checked;
+    return !prayer.checked && prayer.columnId === columnId;
   });
 };
 const filterCardsById = (state: RootState, columnId: number) => {

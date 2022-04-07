@@ -45,7 +45,7 @@ const PrayerList: React.FC<PrayerListProps> = ({prayers, isEdited}) => {
       {isEdited ? (
         <SwipeListView
           data={prayers}
-          extraData={prayers}
+          extraData={prayers.length}
           renderItem={({item}: {item: Prayer}) => <PrayerItem prayer={item} />}
           renderHiddenItem={renderItemHidden}
           keyExtractor={(item: Prayer) => item.id.toString()}
@@ -55,7 +55,7 @@ const PrayerList: React.FC<PrayerListProps> = ({prayers, isEdited}) => {
       ) : (
         <List<React.Component>
           data={prayers}
-          extraData={prayers}
+          extraData={prayers.length}
           renderItem={({item}: {item: Prayer}) => <PrayerItem prayer={item} />}
           keyExtractor={(item: Prayer) => item.id.toString()}
         />

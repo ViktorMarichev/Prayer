@@ -3,6 +3,7 @@ import { createRoutine } from 'redux-saga-routines';
 import Prayer from 'src/types/Prayer';
 export const getPrayers = createRoutine('prayers/getAll');
 export const createPrayer = createRoutine('prayers/create');
+export const deletePrayer = createRoutine('prayers/delete');
 type PrayerType = {
   prayersList: Array<Prayer>,
   message: string | null,
@@ -13,7 +14,12 @@ const PrayersSlice = createSlice({
     prayersList: [],
     message: null
   } as PrayerType,
-  reducers: {},
+  reducers: {
+    clearMessage: (state) => {
+      state.message = null;
+    },
+
+  },
   extraReducers: {
     [getPrayers.SUCCESS]: (state, action) => {
       state.prayersList = action.payload;
@@ -24,8 +30,17 @@ const PrayersSlice = createSlice({
     },
     [createPrayer.SUCCESS]: (state, action) => {
       return state.message = action.payload.message;
+    },
+    [deletePrayer.SUCCESS]: (state, action) => {
+      const newPrayerList = state.prayersList.filter((elem) => {
+        return elem.id != action.payload.id
+      })
+      return { prayersList: newPrayerList, message: 'done', }
+    },
+    [deletePrayer.FAILURE]: (state, action) => {
+      state.message = action.payload.message;
     }
   },
 });
-
+export const actions = PrayersSlice.actions;
 export default PrayersSlice.reducer;

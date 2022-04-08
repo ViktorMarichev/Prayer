@@ -8,6 +8,10 @@ type createPrayerParams = {
   checked: boolean,
   columnId: number,
   token?: string,
+};
+type deletePrayerParams = {
+  id: number;
+  token: string;
 }
 export const Prayers = {
   getAll: function (params: prayersParams = {}) {
@@ -26,5 +30,10 @@ export const Prayers = {
       checked,
       columnId,
     }));
+  },
+  delete: function (params: deletePrayerParams) {
+    const { token, id } = params;
+    const api = apiInstance({ token });
+    return api.delete('/prayers/' + id);
   },
 };

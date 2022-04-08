@@ -5,11 +5,12 @@ import { Columns } from './api/columns';
 import { Prayers } from './api/prayers';
 import { login } from './User/slice';
 import { getColumns } from './Columns/slice';
-import { getPrayers, createPrayer } from './Prayers/index';
+import { getPrayers, createPrayer, deletePrayer } from './Prayers/index';
 type signInAction = ReturnType<typeof login>;
 type getColumnsAction = ReturnType<typeof getColumns>;
 type getPrayersAction = ReturnType<typeof getPrayers>;
 type createPrayerAction = ReturnType<typeof createPrayer>;
+type deletePrayerAction = ReturnType<typeof deletePrayer>;
 function* signInWorker(action: signInAction) {
   const { email, password } = action.payload;
   const { success, failure } = login;
@@ -84,6 +85,24 @@ function* createPrayerWorker(action: createPrayerAction) {
     yield put(failure({ message: (error as Error).message }));
   }
 }
+function* deletePrayerWorker(action: deletePrayerAction) {
+  const { token, id } = action.payload;
+  const { success, failure } = deletePrayer;
+  try {
+    const { data: response } = yield call(Prayers.delete, { token, id });
+    if (!response.message) {
+
+      yield put(success({ id: response.id }));
+    }
+    else {
+      yield put(failure({ message: response.message }));
+    }
+  }
+  catch (error) {
+    console.log('104 line', (error as Error).message)
+    yield put(failure({ message: (error as Error).message }));
+  }
+}
 
 export function* columnsWatcher() {
   yield takeLatest(getColumns.TRIGGER, getColumnsWorker);
@@ -98,9 +117,12 @@ export function* prayersWatcher() {
 export function* createPrayerWatcher() {
   yield takeLatest(createPrayer.TRIGGER, createPrayerWorker);
 }
+export function* deletePrayerWatcher() {
+  yield takeLatest(deletePrayer.TRIGGER, deletePrayerWorker);
+}
 
 // notice how we now only export the rootSaga
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
-  yield all([userWatcher(), columnsWatcher(), prayersWatcher(), createPrayerWatcher()]);
+  yield all([userWatcher(), columnsWatcher(), prayersWatcher(), createPrayerWatcher(), deletePrayerWatcher()]);
 }

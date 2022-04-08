@@ -1,21 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components/native';
-import {
-  FlatList,
-  Text,
-  TouchableOpacity,
-  ListRenderItemInfo,
-  View,
-} from 'react-native';
+import {Alert} from 'react-native';
 import Prayer from 'src/types/Prayer';
 import PrayerItem from '@components/PrayerItem/index';
 import {SwipeListView} from 'react-native-swipe-list-view';
-
+import {useAppDispatch, useAppSelector} from 'src/redux/store';
+import {UserSelectors} from 'src/redux/User/index';
+import {deletePrayer} from 'src/redux/Prayers/index';
 type PrayerListProps = {
   prayers: Array<Prayer>;
   isEdited: boolean;
 };
 const PrayerList: React.FC<PrayerListProps> = ({prayers, isEdited}) => {
+  const dispatch = useAppDispatch();
+  const prayerMessage = useAppSelector(state => state.prayers.message);
+  const token = useAppSelector(state => UserSelectors.userData(state).token);
   type hiddenItemData = {
     item: Prayer;
   };
@@ -27,13 +26,22 @@ const PrayerList: React.FC<PrayerListProps> = ({prayers, isEdited}) => {
       rowMap[rowKey].closeRow();
     }
   };
+  const deleteRow = (rowMap: Array<row>, data: hiddenItemData) => {
+    const rowKey = data.item.id;
+    closeRow(rowMap, rowKey);
+    dispatch(deletePrayer({id: data.item.id, token}));
+  };
+  useEffect(() => {
+    if (prayerMessage === 'done') {
+    }
+  }, [prayerMessage]);
   const renderItemHidden = (data: hiddenItemData, rowMap: any) => {
     return (
       <HiddenItemsContainer>
         <EditRowButton>
           <EditRowText>Edit</EditRowText>
         </EditRowButton>
-        <DeleteRowButton onPress={() => closeRow(rowMap, data.item.id)}>
+        <DeleteRowButton onPress={() => deleteRow(rowMap, data)}>
           <DeleteRowText>Delete</DeleteRowText>
         </DeleteRowButton>
       </HiddenItemsContainer>

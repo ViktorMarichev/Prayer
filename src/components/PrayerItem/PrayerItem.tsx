@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {GestureResponderEvent} from 'react-native';
 import Prayer from 'src/types/Prayer';
 import styled from 'styled-components/native';
 import CheckBox from '@components/CheckBox/index';
@@ -7,13 +7,30 @@ import SvgRectangle from '@svg/Rectangle';
 import SvgUser from '@svg/User';
 import SvgPrayer from '@svg/PrayerLine';
 import RootStackContext, {StackContextType} from 'src/context/RootStackContext';
+import {useAppDispatch, useAppSelector} from 'src/redux/store';
+import {UserSelectors} from 'src/redux/User/index';
+import {updatePrayer} from 'src/redux/Prayers/index';
 type PrayerItemProps = {
   prayer: Prayer;
 };
 
 const PrayerItem: React.FC<PrayerItemProps> = ({prayer}) => {
   const stackContext = useContext(RootStackContext) as StackContextType;
-
+  const dispatch = useAppDispatch();
+  const token = useAppSelector(state => UserSelectors.userData(state).token);
+  const CheckedChangeHandler = (e: GestureResponderEvent, prayer: Prayer) => {
+    e.stopPropagation();
+    dispatch(
+      updatePrayer({
+        id: prayer.id,
+        title: prayer.title,
+        description: prayer.description,
+        checked: !prayer.checked,
+        columnId: prayer.columnId,
+        token,
+      }),
+    );
+  };
   return (
     <PrayerTouchableOpacity
       onPress={() => {
@@ -24,7 +41,10 @@ const PrayerItem: React.FC<PrayerItemProps> = ({prayer}) => {
           <RectangleWrapper>
             <SvgRectangle />
           </RectangleWrapper>
-          <CheckBoxWrapper>
+          <CheckBoxWrapper
+            onPress={(e: GestureResponderEvent) =>
+              CheckedChangeHandler(e, prayer)
+            }>
             <CheckBox checked={prayer.checked} />
           </CheckBoxWrapper>
           <PrayerTitle
@@ -72,7 +92,7 @@ const RectangleWrapper = styled.View`
   width: 24px;
   height: 24px;
 `;
-const CheckBoxWrapper = styled.View`
+const CheckBoxWrapper = styled.TouchableOpacity`
   margin-left: 6px;
   margin-right: 15px;
 `;

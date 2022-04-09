@@ -4,6 +4,7 @@ import Prayer from 'src/types/Prayer';
 export const getPrayers = createRoutine('prayers/getAll');
 export const createPrayer = createRoutine('prayers/create');
 export const deletePrayer = createRoutine('prayers/delete');
+export const updatePrayer = createRoutine('prayers/update');
 type PrayerType = {
   prayersList: Array<Prayer>,
   message: string | null,
@@ -32,13 +33,31 @@ const PrayersSlice = createSlice({
       return state.message = action.payload.message;
     },
     [deletePrayer.SUCCESS]: (state, action) => {
-      const newPrayerList = state.prayersList.filter((elem) => {
+      const newPrayerList = void (state.prayersList.filter((elem) => {
         return elem.id != action.payload.id
-      })
+      }))
       return { prayersList: newPrayerList, message: 'done', }
     },
     [deletePrayer.FAILURE]: (state, action) => {
       state.message = action.payload.message;
+    },
+    [updatePrayer.SUCCESS]: (state, action) => {
+      const newPrayer: Prayer = action.payload;
+      return {
+        prayersList: state.prayersList.map((elem) => {
+          if (elem.id == newPrayer.id) {
+            return newPrayer
+          }
+          return elem;
+
+        })
+      }
+
+
+    },
+    [updatePrayer.FAILURE]: (state, action) => {
+
+      state.message = action.message;
     }
   },
 });

@@ -13,13 +13,13 @@ const Tab = createMaterialTopTabNavigator<TabStackParamList>();
 
 type TasksProps = NativeStackScreenProps<RootStackParamList, 'Tasks'>;
 
-const TaskList: React.FC<TasksProps> = ({navigation}) => {
+const TaskList: React.FC<TasksProps> = ({navigation, route}) => {
   return (
     <StackContext.Provider value={{navigation}}>
       <TaskWrapper>
         <Header>
           <HeaderTitleWrapper>
-            <HeaderTitle>To do</HeaderTitle>
+            <HeaderTitle>{route.params.title}</HeaderTitle>
           </HeaderTitleWrapper>
           <SettingsButtonWrapper
             onPress={() => navigation.navigate('Settings')}>

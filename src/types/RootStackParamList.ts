@@ -1,9 +1,12 @@
 import Prayer from 'src/types/Prayer';
 import {NavigatorScreenParams} from '@react-navigation/native';
 import TabStackParamList from './TabStackParamList';
+
 type RootStackParamList = {
   Desks: undefined;
-  Tasks: undefined | NavigatorScreenParams<TabStackParamList>;
+  Tasks: NavigatorScreenParams<TabStackParamList> & {
+    title: string;
+  };
   Details: Prayer;
   Authorization: undefined;
   Settings: undefined;

@@ -40,6 +40,7 @@ const DeskListItem: React.FC<DeskListItemProps> = ({item, navigation}) => {
     navigation.navigate('Tasks', {
       screen: 'MyPrayers',
       params: {columnId: item.id},
+      title: item.title,
     });
   };
   return (

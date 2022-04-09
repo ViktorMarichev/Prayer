@@ -34,7 +34,7 @@ const PrayerItem: React.FC<PrayerItemProps> = ({prayer}) => {
   return (
     <PrayerTouchableOpacity
       onPress={() => {
-        stackContext.navigation.navigate('Details');
+        stackContext.navigation.navigate('Details', prayer);
       }}>
       <PrayerItemWrapper>
         <PrayerStart>

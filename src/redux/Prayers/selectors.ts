@@ -5,7 +5,6 @@ const getAll = (state: RootState) => {
   return state.prayers;
 };
 const getCheckedPrayers = (state: RootState, columnId: number) => {
-  console.log('checkedPrayers selector', state.prayers.prayersList);
   return state.prayers.prayersList.filter((prayer: Prayer) => {
     return prayer.checked && prayer.columnId === columnId;
   }).sort((a, b) => {

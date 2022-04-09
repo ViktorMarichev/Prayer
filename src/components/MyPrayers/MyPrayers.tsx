@@ -53,9 +53,6 @@ const MyPrayers: React.FC<MyPrayersScreenProps> = ({route}) => {
     prayersSelector.getNotCheckedPrayers(state, route.params.columnId),
   );
   useEffect(() => {
-    console.log(prayersNotChecked);
-  }, [prayersNotChecked]);
-  useEffect(() => {
     dispatch(getPrayers({token}));
     setLoaded(true);
   }, [loaded]);

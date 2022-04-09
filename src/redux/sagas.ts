@@ -5,12 +5,13 @@ import { Columns } from './api/columns';
 import { Prayers } from './api/prayers';
 import { login } from './User/slice';
 import { getColumns } from './Columns/slice';
-import { getPrayers, createPrayer, deletePrayer } from './Prayers/index';
+import { getPrayers, createPrayer, deletePrayer, updatePrayer } from './Prayers/index';
 type signInAction = ReturnType<typeof login>;
 type getColumnsAction = ReturnType<typeof getColumns>;
 type getPrayersAction = ReturnType<typeof getPrayers>;
 type createPrayerAction = ReturnType<typeof createPrayer>;
 type deletePrayerAction = ReturnType<typeof deletePrayer>;
+type updatePrayerAction = ReturnType<typeof updatePrayer>;
 function* signInWorker(action: signInAction) {
   const { email, password } = action.payload;
   const { success, failure } = login;
@@ -103,6 +104,31 @@ function* deletePrayerWorker(action: deletePrayerAction) {
     yield put(failure({ message: (error as Error).message }));
   }
 }
+function* updatePrayerWorker(action: updatePrayerAction) {
+  const { token, checked, id, columnId, title, description } = action.payload;
+  const { success, failure } = updatePrayer;
+  try {
+    const { data: response } = yield call(Prayers.update, {
+      title,
+      description,
+      checked,
+      id,
+      columnId,
+      token
+    });
+    if (!response.message) {
+      yield put(success(response));
+    }
+    else {
+      yield put(failure({ message: response.message }));
+    }
+
+  }
+  catch (error) {
+    console.log((error as Error).message);
+    yield put(failure({ message: (error as Error).message }));
+  }
+}
 
 export function* columnsWatcher() {
   yield takeLatest(getColumns.TRIGGER, getColumnsWorker);
@@ -120,9 +146,19 @@ export function* createPrayerWatcher() {
 export function* deletePrayerWatcher() {
   yield takeLatest(deletePrayer.TRIGGER, deletePrayerWorker);
 }
+export function* updatePrayerWatcher() {
+  yield takeLatest(updatePrayer.TRIGGER, updatePrayerWorker);
+}
 
 // notice how we now only export the rootSaga
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
-  yield all([userWatcher(), columnsWatcher(), prayersWatcher(), createPrayerWatcher(), deletePrayerWatcher()]);
+  yield all([
+    userWatcher(),
+    columnsWatcher(),
+    prayersWatcher(),
+    createPrayerWatcher(),
+    deletePrayerWatcher(),
+    updatePrayerWatcher()
+  ]);
 }

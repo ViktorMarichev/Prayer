@@ -12,6 +12,14 @@ type createPrayerParams = {
 type deletePrayerParams = {
   id: number;
   token: string;
+};
+type updatePrayerParams = {
+  id: number;
+  title: string;
+  description: string;
+  columnId: number;
+  token: string;
+  checked: boolean;
 }
 export const Prayers = {
   getAll: function (params: prayersParams = {}) {
@@ -35,5 +43,15 @@ export const Prayers = {
     const { token, id } = params;
     const api = apiInstance({ token });
     return api.delete('/prayers/' + id);
+  },
+  update: function (params: updatePrayerParams) {
+    const { token, checked, id, title, description, columnId } = params;
+    const api = apiInstance({ token });
+    return api.put('/prayers/' + id, {
+      title,
+      description,
+      checked,
+      columnId,
+    })
   },
 };

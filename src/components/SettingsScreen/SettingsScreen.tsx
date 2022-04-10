@@ -1,14 +1,24 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import SvgArrowBack from '@svg/ArrowBack';
+import {CommonActions} from '@react-navigation/native';
 import SvgSettings from '@svg/Settings';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from 'src/types/RootStackParamList';
+import {logout} from 'src/redux/User/index';
+import {useAppDispatch} from 'src/redux/store';
 type SettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Settings'
 >;
 const SettingsScreen: React.FC<SettingsScreenProps> = ({navigation}) => {
+  const dispatch = useAppDispatch();
+  const logOut = () => {
+    dispatch(logout());
+    navigation.dispatch(
+      CommonActions.reset({index: 1, routes: [{name: 'Authorization'}]}),
+    );
+  };
   return (
     <SettingsScreenWrapper>
       <SettingsHeader>
@@ -22,7 +32,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({navigation}) => {
       </SettingsHeader>
       <SettingsListWrapper>
         <SettingsList>
-          <SettingItem>
+          <SettingItem onPress={logOut}>
             <SettingText>LogOut</SettingText>
           </SettingItem>
         </SettingsList>

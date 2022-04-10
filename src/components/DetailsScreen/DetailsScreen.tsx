@@ -11,12 +11,10 @@ import SvgArrowBack from '@svg/ArrowBack';
 import SvgPrayerline from '@svg/PrayerLine';
 import SvgRectangle from '@svg/Rectangle';
 import AddCircle from '@svg/AddCircle';
-import SvgComment from '@svg/Vector (stroke)';
+import CommentList from '@components/CommentList/index';
 type DetailScreenProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
 const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
-  const [CommentValue, setCommentValue] = useState<string>('');
-
   return (
     <ScrollView
       style={{
@@ -92,76 +90,7 @@ const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
           </MembersWrapper>
         </DetailsBody>
         <DetailsBottom>
-          <CommentListWrapper>
-            <CommentListTitleWrapper>
-              <CommentListTitle>COMMENTS</CommentListTitle>
-            </CommentListTitleWrapper>
-
-            <CommentList>
-              <ScrollView>
-                <CommentItem>
-                  <CommentItemHeader>
-                    <UserPreviewWrapper>
-                      <UserPreview
-                        source={require('src/assets/images/face3.png')}
-                      />
-                    </UserPreviewWrapper>
-                  </CommentItemHeader>
-                  <CommentItemBody>
-                    <UserNameWrapper>
-                      <UserName>Anna Barber</UserName>
-                      <CommentTime>2 days ago</CommentTime>
-                    </UserNameWrapper>
-                    <CommentMessage>
-                      What are you talking about?!
-                    </CommentMessage>
-                  </CommentItemBody>
-                </CommentItem>
-
-                <CommentItem>
-                  <CommentItemHeader>
-                    <UserPreviewWrapper>
-                      <UserPreview
-                        source={require('src/assets/images/face1.png')}
-                      />
-                    </UserPreviewWrapper>
-                  </CommentItemHeader>
-                  <CommentItemBody>
-                    <UserNameWrapper>
-                      <UserName>Hanna Barber</UserName>
-                      <CommentTime>2 days ago</CommentTime>
-                    </UserNameWrapper>
-                    <CommentMessage>Of course you will deny it</CommentMessage>
-                  </CommentItemBody>
-                </CommentItem>
-
-                <CommentItem>
-                  <CommentItemHeader>
-                    <UserPreviewWrapper>
-                      <UserPreview
-                        source={require('src/assets/images/face2.png')}
-                      />
-                    </UserPreviewWrapper>
-                  </CommentItemHeader>
-                  <CommentItemBody>
-                    <UserNameWrapper>
-                      <UserName>Gloria Jeans</UserName>
-                      <CommentTime>2 days ago</CommentTime>
-                    </UserNameWrapper>
-                    <CommentMessage>Shut up everyone!</CommentMessage>
-                  </CommentItemBody>
-                </CommentItem>
-              </ScrollView>
-            </CommentList>
-          </CommentListWrapper>
-          <CommentInputWrapper>
-            <SvgComment />
-            <CommentInput
-              placeholder="Add a comment..."
-              onChangeText={(text: string) => setCommentValue(text)}
-              value={CommentValue}
-            />
-          </CommentInputWrapper>
+          <CommentList />
         </DetailsBottom>
       </DetailsScreenWrapper>
     </ScrollView>
@@ -284,72 +213,5 @@ const MemberImageWrapper = styled.View`
   overflow: hidden;
 `;
 const JoinMemberButton = styled.TouchableOpacity``;
-const CommentListWrapper = styled.View`
-  padding-top: 28px;
 
-  flex-grow: 1;
-`;
-const CommentList = styled.View`
-  width: 100%;
-
-  min-height: 230px;
-`;
-const CommentItem = styled.View`
-  width: 100%;
-  flex-direction: row;
-  padding-top: 15px;
-  padding-bottom: 14px;
-  border: 1px solid #e5e5e5;
-  padding-left: 15px;
-`;
-const CommentItemHeader = styled.View`
-  padding-right: 9px;
-`;
-const CommentItemBody = styled.View``;
-const UserPreviewWrapper = styled.View`
-  border-radius: 50px;
-  overflow: hidden;
-`;
-const CommentListTitle = styled(TableItemAdditionValueBlue)`
-  margin-bottom: 15px;
-`;
-const CommentListTitleWrapper = styled.View`
-  padding-left: 15px;
-`;
-const UserPreview = styled.Image``;
-const UserNameWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-const UserName = styled.Text`
-  font-family: 'SF-UI-Text-Regular';
-  font-size: 17px;
-  line-height: 20px;
-  color: #514d47;
-`;
-const CommentTime = styled.Text`
-  font-family: 'SF-UI-Text-Regular';
-  font-size: 13px;
-  line-height: 16px;
-  color: #9c9c9c;
-  margin-left: 6px;
-`;
-const CommentMessage = styled.Text`
-  font-family: 'SF-UI-Text-Regular';
-  font-size: 17px;
-  line-height: 20px;
-  margin-top: 2px;
-  color: #514d47;
-`;
-const CommentInput = styled.TextInput`
-  width: 100%;
-  background-color: white;
-`;
-const CommentInputWrapper = styled.View`
-  height: auto;
-  padding-left: 15px;
-  flex-grow: 1;
-  flex-direction: row;
-  align-items: center;
-`;
 export default DetailsScreen;

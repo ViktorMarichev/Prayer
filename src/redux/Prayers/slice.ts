@@ -29,7 +29,7 @@ const PrayersSlice = createSlice({
       return {...state, message: action.payload.message};
     },
     [createPrayer.SUCCESS]: (state, action) => {
-      return (state.message = action.payload.message);
+      return {prayersList: state.prayersList, message: action.payload.message};
     },
     [deletePrayer.SUCCESS]: (state, action) => {
       return {

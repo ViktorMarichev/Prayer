@@ -16,7 +16,8 @@ const CommentSlice = createSlice({
   reducers: {},
   extraReducers: {
     [getComments.SUCCESS]: (state, action) => {
-      return (state.commentsList = action.payload);
+      console.log('slice', action.payload);
+      state.commentsList = action.payload;
     },
     [getComments.FAILURE]: (state, action) => {
       return {commentsList: [], message: action.payload.message};

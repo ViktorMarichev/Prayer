@@ -2,6 +2,7 @@ import {ErrorMessage} from '@hookform/error-message';
 import {call, put, takeLatest, all} from 'redux-saga/effects';
 import {User} from './api/user';
 import {Columns} from './api/columns';
+import {Comments} from './api/comments';
 import {Prayers} from './api/prayers';
 import {login} from './User/slice';
 import {getColumns} from './Columns/slice';
@@ -134,10 +135,10 @@ function* updatePrayerWorker(action: updatePrayerAction) {
 function* getCommentsWorker(action: getCommentsAction) {
   const {token} = action.payload;
 
-  const {success, failure} = getColumns;
+  const {success, failure} = getComments;
   try {
-    const {data: commentArray} = yield call(Columns.getAll, {token});
-
+    const {data: commentArray} = yield call(Comments.getAll, {token});
+    console.log('saga', commentArray);
     if (commentArray.message) {
       yield put(failure({message: commentArray.message}));
     } else {

@@ -2,6 +2,7 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import {TypedUseSelectorHook, useSelector, useDispatch} from 'react-redux';
 import UserReducer from './User/index';
+import CommentsReducer from './Comments/index';
 import {persistStore, persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   user: UserReducer,
   columns: columnsReducer,
   prayers: PrayersSlice,
+  comments: CommentsReducer,
 });
 const persistConfig = {
   key: 'root',

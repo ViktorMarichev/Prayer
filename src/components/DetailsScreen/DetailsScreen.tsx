@@ -16,12 +16,12 @@ type DetailScreenProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
 const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
   return (
-    <ScrollView
-      style={{
-        height: '100%',
-        display: 'flex',
-      }}>
-      <DetailsScreenWrapper>
+    <DetailsScreenWrapper>
+      <ScrollView
+        style={{
+          height: '100%',
+          display: 'flex',
+        }}>
         <DetailsHeader>
           <HeaderTop>
             <ArrowWrapper onPress={() => navigation.goBack()}>
@@ -89,11 +89,11 @@ const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
             </MemberList>
           </MembersWrapper>
         </DetailsBody>
-        <DetailsBottom>
-          <CommentList />
-        </DetailsBottom>
-      </DetailsScreenWrapper>
-    </ScrollView>
+      </ScrollView>
+      <DetailsBottom>
+        <CommentList prayerId={route.params.id} />
+      </DetailsBottom>
+    </DetailsScreenWrapper>
   );
 };
 const DetailsScreenWrapper = styled.View`

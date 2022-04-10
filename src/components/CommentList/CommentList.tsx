@@ -1,9 +1,41 @@
-import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components/native';
 import SvgComment from '@svg/Vector (stroke)';
-const CommentList: React.FC = () => {
+import {UserSelectors} from 'src/redux/User/index';
+import {useAppSelector, useAppDispatch} from 'src/redux/store';
+import {getComments, commentsSelectors} from 'src/redux/Comments/index';
+import Comment from 'src/types/Comment';
+
+type CommentListProps = {
+  prayerId: number;
+};
+const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
   const [CommentValue, setCommentValue] = useState<string>('');
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const token = useAppSelector(state => UserSelectors.userData(state).token);
+  const dispatch = useAppDispatch();
+  const comments = useAppSelector(state =>
+    commentsSelectors.getCommentsByPrayerId(state, prayerId),
+  );
+  function formatDate(date: Date) {
+    let dd: string | number = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+
+    let mm: string | number = date.getMonth() + 1;
+    if (mm < 10) mm = '0' + mm;
+
+    let yy: string | number = date.getFullYear() % 100;
+    if (yy < 10) yy = '0' + yy;
+
+    return dd + '.' + mm + '.' + yy;
+  }
+  useEffect(() => {
+    dispatch(getComments({token}));
+    setLoaded(true);
+  }, [loaded]);
+  useEffect(() => {
+    console.log('commentList', comments);
+  }, [comments]);
   return (
     <CommentListContainer>
       <CommentListWrapper>
@@ -12,58 +44,31 @@ const CommentList: React.FC = () => {
         </CommentListTitleWrapper>
 
         <List>
-          <ScrollView>
-            <CommentItem>
-              <CommentItemHeader>
-                <UserPreviewWrapper>
-                  <UserPreview
-                    source={require('src/assets/images/face3.png')}
-                  />
-                </UserPreviewWrapper>
-              </CommentItemHeader>
-              <CommentItemBody>
-                <UserNameWrapper>
-                  <UserName>Anna Barber</UserName>
-                  <CommentTime>2 days ago</CommentTime>
-                </UserNameWrapper>
-                <CommentMessage>What are you talking about?!</CommentMessage>
-              </CommentItemBody>
-            </CommentItem>
-
-            <CommentItem>
-              <CommentItemHeader>
-                <UserPreviewWrapper>
-                  <UserPreview
-                    source={require('src/assets/images/face1.png')}
-                  />
-                </UserPreviewWrapper>
-              </CommentItemHeader>
-              <CommentItemBody>
-                <UserNameWrapper>
-                  <UserName>Hanna Barber</UserName>
-                  <CommentTime>2 days ago</CommentTime>
-                </UserNameWrapper>
-                <CommentMessage>Of course you will deny it</CommentMessage>
-              </CommentItemBody>
-            </CommentItem>
-
-            <CommentItem>
-              <CommentItemHeader>
-                <UserPreviewWrapper>
-                  <UserPreview
-                    source={require('src/assets/images/face2.png')}
-                  />
-                </UserPreviewWrapper>
-              </CommentItemHeader>
-              <CommentItemBody>
-                <UserNameWrapper>
-                  <UserName>Gloria Jeans</UserName>
-                  <CommentTime>2 days ago</CommentTime>
-                </UserNameWrapper>
-                <CommentMessage>Shut up everyone!</CommentMessage>
-              </CommentItemBody>
-            </CommentItem>
-          </ScrollView>
+          <FlatListComments<React.Component>
+            data={comments}
+            extraData={comments}
+            renderItem={({item}: {item: Comment}) => (
+              <CommentItem>
+                <CommentItemHeader>
+                  <UserPreviewWrapper>
+                    <UserPreview
+                      source={require('src/assets/images/face3.png')}
+                    />
+                  </UserPreviewWrapper>
+                </CommentItemHeader>
+                <CommentItemBody>
+                  <UserNameWrapper>
+                    <UserName>Anna Barber</UserName>
+                    <CommentTime>
+                      {formatDate(new Date(item.created))}
+                    </CommentTime>
+                  </UserNameWrapper>
+                  <CommentMessage>{item.body}</CommentMessage>
+                </CommentItemBody>
+              </CommentItem>
+            )}
+            keyExtractor={(item: Comment) => item.id.toString()}
+          />
         </List>
       </CommentListWrapper>
       <CommentInputWrapper>
@@ -87,9 +92,9 @@ const CommentListWrapper = styled.View`
 `;
 const List = styled.View`
   width: 100%;
-
   min-height: 230px;
 `;
+const FlatListComments = styled.FlatList``;
 const CommentItem = styled.View`
   width: 100%;
   flex-direction: row;

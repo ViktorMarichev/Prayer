@@ -78,6 +78,7 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
               render={({field: {onChange, onBlur, value}}) => (
                 <EmailInput
                   placeholder="Enter a email"
+                  placeholderColor="#727272"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
@@ -110,6 +111,7 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
               render={({field: {onChange, onBlur, value}}) => (
                 <PasswordInput
                   placeholder="Enter a password"
+                  placeholderColor="#727272"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}

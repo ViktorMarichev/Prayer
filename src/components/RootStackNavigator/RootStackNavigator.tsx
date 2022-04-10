@@ -8,14 +8,17 @@ import AuthScreen from '@components/AuthScreen/index';
 import DetailsScreen from '@components/DetailsScreen/index';
 import SettingsScreen from '@components/SettingsScreen';
 import RegistrationScreen from '@components/RegScreen/index';
+import {useAppSelector} from 'src/redux/store';
+import {UserSelectors} from 'src/redux/User/index';
 const RootStackNavigator: React.FC = () => {
   const RootStack = createNativeStackNavigator<RootStackParamList>();
+  const token = useAppSelector(state => UserSelectors.userData(state).token);
   return (
     <RootStack.Navigator
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="Authorization">
+      initialRouteName={token ? 'Desks' : 'Authorization'}>
       <RootStack.Screen name="Desks" component={DeskList} />
       <RootStack.Screen name="Tasks" component={TasksList} />
       <RootStack.Screen name="Details" component={DetailsScreen} />

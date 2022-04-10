@@ -14,7 +14,7 @@ import AddCircle from '@svg/AddCircle';
 import SvgComment from '@svg/Vector (stroke)';
 type DetailScreenProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
-const DetailsScreen: React.FC<DetailScreenProps> = ({navigation}) => {
+const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
   const [CommentValue, setCommentValue] = useState<string>('');
 
   return (
@@ -29,14 +29,16 @@ const DetailsScreen: React.FC<DetailScreenProps> = ({navigation}) => {
             <ArrowWrapper onPress={() => navigation.goBack()}>
               <SvgArrowBack color={'white'} />
             </ArrowWrapper>
-            <Title>Details Screen</Title>
+            <Title>{route.params.title}</Title>
             <PrayerLineWrapper>
               <SvgPrayerline color={'white'} />
             </PrayerLineWrapper>
           </HeaderTop>
           <HeaderBody>
             <PrayerDescription>
-              Some description about your live in this city
+              {route.params.description
+                ? route.params.description
+                : 'Some description about your live in this city'}
             </PrayerDescription>
           </HeaderBody>
         </DetailsHeader>

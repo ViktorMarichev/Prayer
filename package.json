@@ -33,6 +33,7 @@
     "react-native-svg": "^12.3.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
+    "react-native-virtualized-view": "^0.1.5",
     "react-redux": "^7.2.6",
     "redux-persist": "^6.0.0",
     "redux-saga": "^1.1.3",

@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
-import {ScrollView} from 'react-native';
+import {KeyboardAvoidingView, Platform} from 'react-native';
+import {ScrollView} from 'react-native-virtualized-view';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -21,78 +22,88 @@ const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
         style={{
           height: '100%',
           display: 'flex',
-        }}>
-        <DetailsHeader>
-          <HeaderTop>
-            <ArrowWrapper onPress={() => navigation.goBack()}>
-              <SvgArrowBack color={'white'} />
-            </ArrowWrapper>
-            <Title>{route.params.title}</Title>
-            <PrayerLineWrapper>
-              <SvgPrayerline color={'white'} />
-            </PrayerLineWrapper>
-          </HeaderTop>
-          <HeaderBody>
-            <PrayerDescription>
-              {route.params.description
-                ? route.params.description
-                : 'Some description about your live in this city'}
-            </PrayerDescription>
-          </HeaderBody>
-        </DetailsHeader>
-        <DetailsBody>
-          <LastPrayedWpaper>
-            <RectangleWrapper>
-              <SvgRectangle />
-            </RectangleWrapper>
-            <LastPrayed>Last Prayed 8 min ago</LastPrayed>
-          </LastPrayedWpaper>
-          <IndicatorsTable>
-            <DateAddedItem>
-              <TableItemGeneralValue>March 25 2022</TableItemGeneralValue>
-              <TableItemAdditionalValue>Date Added</TableItemAdditionalValue>
-              <TableItemAdditionValueBlue>
-                Opened for 4 days
-              </TableItemAdditionValueBlue>
-            </DateAddedItem>
-            <TableItem>
-              <TableItemGeneralValue>123</TableItemGeneralValue>
-              <TableItemAdditionalValue>
-                Times Prayed Total
-              </TableItemAdditionalValue>
-            </TableItem>
-            <TableItem>
-              <TableItemGeneralValue>63</TableItemGeneralValue>
-              <TableItemAdditionalValue>
-                Times Prayed by Me
-              </TableItemAdditionalValue>
-            </TableItem>
-            <TableItem>
-              <TableItemGeneralValue>60</TableItemGeneralValue>
-              <TableItemAdditionalValue>
-                Times Prayed by Others
-              </TableItemAdditionalValue>
-            </TableItem>
-          </IndicatorsTable>
-          <MembersWrapper>
-            <TableItemAdditionValueBlue>MEMBERS</TableItemAdditionValueBlue>
-            <MemberList>
-              <MemberImageWrapper>
-                <MemberImage source={require('src/assets/images/face1.png')} />
-              </MemberImageWrapper>
-              <MemberImageWrapper>
-                <MemberImage source={require('src/assets/images/face2.png')} />
-              </MemberImageWrapper>
-              <JoinMemberButton>
-                <AddCircle />
-              </JoinMemberButton>
-            </MemberList>
-          </MembersWrapper>
-        </DetailsBody>
+        }}
+        nestedScrollEnabled={true}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1, justifyContent: 'flex-end'}}>
+          <DetailsHeader>
+            <HeaderTop>
+              <ArrowWrapper onPress={() => navigation.goBack()}>
+                <SvgArrowBack color={'white'} />
+              </ArrowWrapper>
+              <Title>{route.params.title}</Title>
+              <PrayerLineWrapper>
+                <SvgPrayerline color={'white'} />
+              </PrayerLineWrapper>
+            </HeaderTop>
+            <HeaderBody>
+              <PrayerDescription>
+                {route.params.description
+                  ? route.params.description
+                  : 'Some description about your live in this city'}
+              </PrayerDescription>
+            </HeaderBody>
+          </DetailsHeader>
+          <DetailsBody>
+            <LastPrayedWpaper>
+              <RectangleWrapper>
+                <SvgRectangle />
+              </RectangleWrapper>
+              <LastPrayed>Last Prayed 8 min ago</LastPrayed>
+            </LastPrayedWpaper>
+            <IndicatorsTable>
+              <DateAddedItem>
+                <TableItemGeneralValue>March 25 2022</TableItemGeneralValue>
+                <TableItemAdditionalValue>Date Added</TableItemAdditionalValue>
+                <TableItemAdditionValueBlue>
+                  Opened for 4 days
+                </TableItemAdditionValueBlue>
+              </DateAddedItem>
+              <TableItem>
+                <TableItemGeneralValue>123</TableItemGeneralValue>
+                <TableItemAdditionalValue>
+                  Times Prayed Total
+                </TableItemAdditionalValue>
+              </TableItem>
+              <TableItem>
+                <TableItemGeneralValue>63</TableItemGeneralValue>
+                <TableItemAdditionalValue>
+                  Times Prayed by Me
+                </TableItemAdditionalValue>
+              </TableItem>
+              <TableItem>
+                <TableItemGeneralValue>60</TableItemGeneralValue>
+                <TableItemAdditionalValue>
+                  Times Prayed by Others
+                </TableItemAdditionalValue>
+              </TableItem>
+            </IndicatorsTable>
+            <MembersWrapper>
+              <TableItemAdditionValueBlue>MEMBERS</TableItemAdditionValueBlue>
+              <MemberList>
+                <MemberImageWrapper>
+                  <MemberImage
+                    source={require('src/assets/images/face1.png')}
+                  />
+                </MemberImageWrapper>
+                <MemberImageWrapper>
+                  <MemberImage
+                    source={require('src/assets/images/face2.png')}
+                  />
+                </MemberImageWrapper>
+                <JoinMemberButton>
+                  <AddCircle />
+                </JoinMemberButton>
+              </MemberList>
+            </MembersWrapper>
+          </DetailsBody>
+
+          <DetailsBottom>
+            <CommentList prayerId={route.params.id} />
+          </DetailsBottom>
+        </KeyboardAvoidingView>
       </ScrollView>
-      <DetailsBottom>
-        <CommentList prayerId={route.params.id} />
-      </DetailsBottom>
     </DetailsScreenWrapper>
   );
 };

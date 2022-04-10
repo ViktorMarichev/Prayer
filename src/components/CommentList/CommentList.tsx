@@ -12,6 +12,7 @@ type CommentListProps = {
 const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
   const [CommentValue, setCommentValue] = useState<string>('');
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [isMargin, setIsMargin] = useState<boolean>(false);
   const token = useAppSelector(state => UserSelectors.userData(state).token);
   const dispatch = useAppDispatch();
   const comments = useAppSelector(state =>
@@ -71,11 +72,13 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
           />
         </List>
       </CommentListWrapper>
-      <CommentInputWrapper>
+
+      <CommentInputWrapper margin={isMargin ? 10 : null}>
         <SvgComment />
         <CommentInput
           placeholder="Add a comment..."
           onChangeText={(text: string) => setCommentValue(text)}
+          onFocus={() => setIsMargin(true)}
           value={CommentValue}
         />
       </CommentInputWrapper>
@@ -150,7 +153,7 @@ const CommentMessage = styled.Text`
 `;
 const CommentInput = styled.TextInput`
   width: 100%;
-  background-color: white;
+  background-color: hsl(0, 0%, 100%);
 `;
 const CommentInputWrapper = styled.View`
   height: auto;
@@ -158,5 +161,8 @@ const CommentInputWrapper = styled.View`
   flex-grow: 1;
   flex-direction: row;
   align-items: center;
+  width: 100%;
+  margin-left: 0px;
+  margin-bottom: ${({margin}: {margin: number | null}) => margin || 0}px;
 `;
 export default CommentList;

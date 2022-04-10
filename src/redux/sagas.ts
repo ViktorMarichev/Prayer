@@ -106,7 +106,7 @@ function* deletePrayerWorker(action: deletePrayerAction) {
       yield put(failure({message: response.message}));
     }
   } catch (error) {
-    console.log('104 line', (error as Error).message);
+    console.log((error as Error).message);
     yield put(failure({message: (error as Error).message}));
   }
 }

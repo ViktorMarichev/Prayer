@@ -8,16 +8,21 @@ export const updatePrayer = createRoutine('prayers/update');
 type PrayerType = {
   prayersList: Array<Prayer>;
   message: string | null;
+  isEdited: boolean;
 };
 const PrayersSlice = createSlice({
   name: 'userSlice',
   initialState: {
     prayersList: [],
     message: null,
+    isEdited: false,
   } as PrayerType,
   reducers: {
     clearMessage: state => {
       state.message = null;
+    },
+    setIsEdited: (state, action) => {
+      state.isEdited = action.payload;
     },
   },
   extraReducers: {

@@ -2,7 +2,7 @@ import {createSelector} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 import Comment from 'src/types/Comment';
 const getAll = (state: RootState) => {
-  return state.comments;
+  return state.comments.commentsList;
 };
 const filterCommentsById = (state: RootState, prayerId: number) => {
   return state.comments.commentsList
@@ -22,9 +22,13 @@ const filterCommentsById = (state: RootState, prayerId: number) => {
       return 0;
     });
 };
-const getCommentsByPrayerId = createSelector(filterCommentsById, prayers => {
-  return prayers;
-});
+const getCommentsByPrayerId = createSelector(
+  filterCommentsById,
+  getAll,
+  comments => {
+    return comments;
+  },
+);
 export default {
   getAll,
   getCommentsByPrayerId,

@@ -1,18 +1,30 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
+  ToastAndroid,
+  TextInputSubmitEditingEventData,
+  FlatList,
+} from 'react-native';
 import styled from 'styled-components/native';
 import SvgComment from '@svg/Vector (stroke)';
 import {UserSelectors} from 'src/redux/User/index';
 import {useAppSelector, useAppDispatch} from 'src/redux/store';
-import {getComments, commentsSelectors} from 'src/redux/Comments/index';
+import {
+  getComments,
+  createComment,
+  commentsSelectors,
+} from 'src/redux/Comments/index';
 import Comment from 'src/types/Comment';
 
 type CommentListProps = {
   prayerId: number;
 };
 const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
-  const [CommentValue, setCommentValue] = useState<string>('');
+  const [commentValue, setCommentValue] = useState<string>('');
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isMargin, setIsMargin] = useState<boolean>(false);
+  const flatListRef = useRef<FlatList | null>(null);
   const token = useAppSelector(state => UserSelectors.userData(state).token);
   const dispatch = useAppDispatch();
   const comments = useAppSelector(state =>
@@ -30,24 +42,51 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
 
     return dd + '.' + mm + '.' + yy;
   }
+
+  const OnChangeCommentHandler = (
+    event: NativeSyntheticEvent<TextInputChangeEventData>,
+  ) => {
+    setCommentValue(event.nativeEvent.text);
+  };
+  const onSubmitComment = (
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
+  ) => {
+    if (commentValue.length < 8) {
+      ToastAndroid.show('Comment is too short !', ToastAndroid.SHORT);
+    } else {
+      dispatch(
+        createComment({
+          token,
+          body: commentValue,
+          prayerId,
+          created: Date.now,
+        }),
+      );
+      setCommentValue('');
+    }
+  };
   useEffect(() => {
     dispatch(getComments({token}));
     setLoaded(true);
   }, [loaded]);
-  useEffect(() => {
-    console.log('commentList', comments);
-  }, [comments]);
+  useEffect(() => {}, [comments]);
+  const contentSizeChangeHandler = () => {
+    flatListRef.current!.scrollToEnd();
+  };
   return (
-    <CommentListContainer>
+    <CommentListContainer margin={isMargin ? 10 : null}>
       <CommentListWrapper>
         <CommentListTitleWrapper>
           <CommentListTitle>COMMENTS</CommentListTitle>
         </CommentListTitleWrapper>
 
         <List>
-          <FlatListComments<React.Component>
+          <FlatListComments<FlatList>
+            ref={flatListRef}
             data={comments}
             extraData={comments}
+            nestedScrollEnabled={true}
+            onContentSizeChange={contentSizeChangeHandler}
             renderItem={({item}: {item: Comment}) => (
               <CommentItem>
                 <CommentItemHeader>
@@ -73,13 +112,14 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
         </List>
       </CommentListWrapper>
 
-      <CommentInputWrapper margin={isMargin ? 10 : null}>
+      <CommentInputWrapper>
         <SvgComment />
         <CommentInput
           placeholder="Add a comment..."
-          onChangeText={(text: string) => setCommentValue(text)}
+          onChange={OnChangeCommentHandler}
           onFocus={() => setIsMargin(true)}
-          value={CommentValue}
+          onSubmitEditing={onSubmitComment}
+          value={commentValue}
         />
       </CommentInputWrapper>
     </CommentListContainer>
@@ -87,6 +127,9 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
 };
 const CommentListContainer = styled.View`
   flex-direction: column;
+  height: 100%;
+  flex: 1;
+  margin-bottom: ${({margin}: {margin: number | null}) => margin || 0}px;
 `;
 const CommentListWrapper = styled.View`
   padding-top: 28px;
@@ -95,9 +138,11 @@ const CommentListWrapper = styled.View`
 `;
 const List = styled.View`
   width: 100%;
-  min-height: 230px;
+  flex: 1;
 `;
-const FlatListComments = styled.FlatList``;
+const FlatListComments = styled.FlatList`
+  width: 100%;
+`;
 const CommentItem = styled.View`
   width: 100%;
   flex-direction: row;
@@ -158,11 +203,9 @@ const CommentInput = styled.TextInput`
 const CommentInputWrapper = styled.View`
   height: auto;
   padding-left: 15px;
-  flex-grow: 1;
   flex-direction: row;
   align-items: center;
   width: 100%;
   margin-left: 0px;
-  margin-bottom: ${({margin}: {margin: number | null}) => margin || 0}px;
 `;
 export default CommentList;

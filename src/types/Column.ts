@@ -3,5 +3,5 @@ export type Column = {
   title: string;
   description: string;
   nullable: true;
-  userId: number;
+  user?: number;
 };

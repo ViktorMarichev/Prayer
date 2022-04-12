@@ -10,7 +10,7 @@
 
 import {JSXElement} from '@babel/types';
 import React, {Component, ReactNode, useEffect, useState} from 'react';
-import {} from 'react-native';
+import {Modal} from 'react-native';
 import styled from 'styled-components/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from 'src/types/RootStackParamList';
@@ -19,6 +19,7 @@ import {getColumns} from '../../redux/Columns/index';
 import {useAppDispatch, useAppSelector} from '../../redux/store';
 import {columnsSelector} from '../../redux/Columns/index';
 import {UserSelectors} from '../../redux/User/index';
+import AddingAColumn from './components/AddingAColumn/index';
 type DeskListItemPropsNavigatior = NativeStackScreenProps<
   RootStackParamList,
   'Desks'
@@ -26,7 +27,7 @@ type DeskListItemPropsNavigatior = NativeStackScreenProps<
 type DeskListItemNavigationProp = DeskListItemPropsNavigatior['navigation'];
 type DeskItemType = {
   id: number;
-  userId: number;
+  user?: number;
   title: string;
   description: string | null;
 };
@@ -51,25 +52,32 @@ const DeskListItem: React.FC<DeskListItemProps> = ({item, navigation}) => {
 };
 const Desks: React.FC<DeskListItemPropsNavigatior> = ({navigation}) => {
   const [loaded, setLoaded] = useState<boolean>(false);
+  const [isVisibleModal, setIsVisibleModal] = useState<boolean>(true);
   const dispatch = useAppDispatch();
   const columns: Array<DeskItemType> = useAppSelector(state =>
     columnsSelector.getAll(state),
   );
   const token = useAppSelector(state => UserSelectors.userData(state).token);
-
+  const closeModalHandler = () => {
+    setIsVisibleModal(false);
+  };
   useEffect(() => {
     dispatch(getColumns({token}));
     setLoaded(true);
   }, [loaded]);
+
   return (
     <DeskContainer>
+      <Modal animationType="slide" transparent={true} visible={isVisibleModal}>
+        <AddingAColumn closeModal={closeModalHandler} />
+      </Modal>
       <DeskHeader>
         <DeskTitleWrapper>
           <DeskTitle>My Desk</DeskTitle>
         </DeskTitleWrapper>
-        <DeskImageWrapper>
+        <DeskButtonWrapper onPress={() => setIsVisibleModal(true)}>
           <SvgUnion />
-        </DeskImageWrapper>
+        </DeskButtonWrapper>
       </DeskHeader>
 
       <DeskList<React.ElementType>
@@ -106,7 +114,7 @@ const DeskTitleWrapper = styled.View`
   align-items: center;
   width: 100%;
 `;
-const DeskImageWrapper = styled.TouchableOpacity`
+const DeskButtonWrapper = styled.TouchableOpacity`
   position: absolute;
   right: 31px;
 `;

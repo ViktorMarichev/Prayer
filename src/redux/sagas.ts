@@ -4,13 +4,17 @@ import {User} from './api/user';
 import {Columns} from './api/columns';
 import {Prayers} from './api/prayers';
 import {login} from './User/slice';
-import {getColumns} from './Columns/slice';
+import {
+  getColumns,
+  createColumn,
+  setRequestStatus as setRequsetStatusColumn,
+} from './Columns/index';
 import {
   getPrayers,
   createPrayer,
   deletePrayer,
   updatePrayer,
-  setRequestStatus,
+  setRequestStatus as setRequestStatusPrayer,
 } from './Prayers/index';
 type signInAction = ReturnType<typeof login>;
 type getColumnsAction = ReturnType<typeof getColumns>;
@@ -18,6 +22,7 @@ type getPrayersAction = ReturnType<typeof getPrayers>;
 type createPrayerAction = ReturnType<typeof createPrayer>;
 type deletePrayerAction = ReturnType<typeof deletePrayer>;
 type updatePrayerAction = ReturnType<typeof updatePrayer>;
+type createColumnAction = ReturnType<typeof createColumn>;
 function* signInWorker(action: signInAction) {
   const {email, password} = action.payload;
   const {success, failure} = login;
@@ -45,22 +50,49 @@ function* getColumnsWorker(action: getColumnsAction) {
 
   const {success, failure} = getColumns;
   try {
-    yield put(setRequestStatus({requestStatus: 'BEGIN_FETCHING'}));
+    yield put(setRequestStatusPrayer({requestStatus: 'BEGIN_FETCHING'}));
     const {data: columnsArray} = yield call(Columns.getAll, {token});
 
     if (columnsArray.message) {
       yield put(failure({message: columnsArray.message}));
-      yield put(setRequestStatus({requestStatus: 'ERROR_FETCHING'}));
-      yield put(setRequestStatus({requestStatus: null}));
+      yield put(setRequestStatusPrayer({requestStatus: 'ERROR_FETCHING'}));
+      yield put(setRequestStatusPrayer({requestStatus: null}));
     } else {
-      yield put(setRequestStatus({requestStatus: 'SUCCESS_FETCHING'}));
+      yield put(setRequestStatusPrayer({requestStatus: 'SUCCESS_FETCHING'}));
       yield put(success(columnsArray));
-      yield put(setRequestStatus({requestStatus: null}));
+      yield put(setRequestStatusPrayer({requestStatus: null}));
     }
   } catch (error) {
-    yield put(setRequestStatus({requestStatus: 'ERROR_FETCHING'}));
-    yield put(setRequestStatus({requestStatus: null}));
+    yield put(setRequestStatusPrayer({requestStatus: 'ERROR_FETCHING'}));
+    yield put(setRequestStatusPrayer({requestStatus: null}));
     console.error(error);
+  }
+}
+
+function* createColumnWorker(action: createColumnAction) {
+  const {token, title, description} = action.payload;
+
+  const {success, failure} = createColumn;
+  try {
+    yield put(setRequsetStatusColumn({requestStatus: 'BEGIN_FETCHING'}));
+    const {data: response} = yield call(Columns.create, {
+      token,
+      title,
+      description,
+    });
+    if (response.message) {
+      yield put(failure({message: response.message}));
+      yield put(setRequsetStatusColumn({requestStatus: 'ERROR_FETCHING'}));
+      yield put(setRequsetStatusColumn({requestStatus: null}));
+    } else {
+      yield put(success(response));
+      yield put(setRequsetStatusColumn({requestStatus: 'SUCCESS_FETCHING'}));
+      yield put(setRequsetStatusColumn({requestStatus: null}));
+    }
+  } catch (error) {
+    yield put(failure({message: (error as Error).message}));
+    yield put(setRequsetStatusColumn({requestStatus: 'ERROR_FETCHING'}));
+    yield put(setRequsetStatusColumn({requestStatus: null}));
   }
 }
 
@@ -142,6 +174,9 @@ export function* columnsWatcher() {
   yield takeLatest(getColumns.TRIGGER, getColumnsWorker);
 }
 
+export function* createColumnWatcher() {
+  yield takeLatest(createColumn.TRIGGER, createColumnWorker);
+}
 export function* userWatcher() {
   yield takeLatest(login.TRIGGER, signInWorker);
 }
@@ -164,6 +199,7 @@ export default function* rootSaga() {
   yield all([
     userWatcher(),
     columnsWatcher(),
+    createColumnWatcher(),
     prayersWatcher(),
     createPrayerWatcher(),
     deletePrayerWatcher(),

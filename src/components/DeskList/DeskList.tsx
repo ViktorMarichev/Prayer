@@ -52,7 +52,7 @@ const DeskListItem: React.FC<DeskListItemProps> = ({item, navigation}) => {
 };
 const Desks: React.FC<DeskListItemPropsNavigatior> = ({navigation}) => {
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [isVisibleModal, setIsVisibleModal] = useState<boolean>(true);
+  const [isVisibleModal, setIsVisibleModal] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const columns: Array<DeskItemType> = useAppSelector(state =>
     columnsSelector.getAll(state),

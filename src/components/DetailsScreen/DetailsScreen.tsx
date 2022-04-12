@@ -10,7 +10,8 @@ import RootStackParamList from 'src/types/RootStackParamList';
 import SvgArrowBack from '@svg/ArrowBack';
 import SvgPrayerline from '@svg/PrayerLine';
 import SvgRectangle from '@svg/Rectangle';
-import AddCircle from '@svg/AddCircle';
+import SvgUnion from '@svg/Union';
+
 import SvgComment from '@svg/Vector (stroke)';
 type DetailScreenProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
@@ -86,7 +87,9 @@ const DetailsScreen: React.FC<DetailScreenProps> = ({navigation, route}) => {
                 <MemberImage source={require('src/assets/images/face2.png')} />
               </MemberImageWrapper>
               <JoinMemberButton>
-                <AddCircle />
+                <AddCircle>
+                  <SvgUnion color={'white'} />
+                </AddCircle>
               </JoinMemberButton>
             </MemberList>
           </MembersWrapper>
@@ -350,6 +353,14 @@ const CommentInputWrapper = styled.View`
   padding-left: 15px;
   flex-grow: 1;
   flex-direction: row;
+  align-items: center;
+`;
+const AddCircle = styled.View`
+  background-color: #bfb393;
+  border-radius: 50px;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
   align-items: center;
 `;
 export default DetailsScreen;

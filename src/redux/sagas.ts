@@ -1,11 +1,17 @@
-import { ErrorMessage } from '@hookform/error-message';
-import { call, put, takeLatest, all } from 'redux-saga/effects';
-import { User } from './api/user';
-import { Columns } from './api/columns';
-import { Prayers } from './api/prayers';
-import { login } from './User/slice';
-import { getColumns } from './Columns/slice';
-import { getPrayers, createPrayer, deletePrayer, updatePrayer } from './Prayers/index';
+import {ErrorMessage} from '@hookform/error-message';
+import {call, put, takeLatest, all} from 'redux-saga/effects';
+import {User} from './api/user';
+import {Columns} from './api/columns';
+import {Prayers} from './api/prayers';
+import {login} from './User/slice';
+import {getColumns} from './Columns/slice';
+import {
+  getPrayers,
+  createPrayer,
+  deletePrayer,
+  updatePrayer,
+  setRequestStatus,
+} from './Prayers/index';
 type signInAction = ReturnType<typeof login>;
 type getColumnsAction = ReturnType<typeof getColumns>;
 type getPrayersAction = ReturnType<typeof getPrayers>;
@@ -13,19 +19,19 @@ type createPrayerAction = ReturnType<typeof createPrayer>;
 type deletePrayerAction = ReturnType<typeof deletePrayer>;
 type updatePrayerAction = ReturnType<typeof updatePrayer>;
 function* signInWorker(action: signInAction) {
-  const { email, password } = action.payload;
-  const { success, failure } = login;
+  const {email, password} = action.payload;
+  const {success, failure} = login;
   // принимает email и password извне
 
   try {
     // запросить токен, получить его, а затем попытаться запросить данные
-    const { data: authData } = yield call(User.login, { email, password });
-    const { token, name, id, message } = authData;
+    const {data: authData} = yield call(User.login, {email, password});
+    const {token, name, id, message} = authData;
     // в случае успеха отдать данные редьюсеру
     if (message) {
-      yield put(failure({ message }));
+      yield put(failure({message}));
     } else {
-      yield put(success({ token, email, name, id }));
+      yield put(success({token, email, name, id}));
     }
   } catch (error) {
     // ошибку можно тоже отдать редьюсеру через вызов failure
@@ -35,98 +41,100 @@ function* signInWorker(action: signInAction) {
   }
 }
 function* getColumnsWorker(action: getColumnsAction) {
-  const { token } = action.payload;
+  const {token} = action.payload;
 
-  const { success, failure } = getColumns;
+  const {success, failure} = getColumns;
   try {
-    const { data: columnsArray } = yield call(Columns.getAll, { token });
+    yield put(setRequestStatus({requestStatus: 'BEGIN_FETCHING'}));
+    const {data: columnsArray} = yield call(Columns.getAll, {token});
 
     if (columnsArray.message) {
-      yield put(failure({ message: columnsArray.message }));
+      yield put(failure({message: columnsArray.message}));
+      yield put(setRequestStatus({requestStatus: 'ERROR_FETCHING'}));
+      yield put(setRequestStatus({requestStatus: null}));
     } else {
+      yield put(setRequestStatus({requestStatus: 'SUCCESS_FETCHING'}));
       yield put(success(columnsArray));
+      yield put(setRequestStatus({requestStatus: null}));
     }
   } catch (error) {
+    yield put(setRequestStatus({requestStatus: 'ERROR_FETCHING'}));
+    yield put(setRequestStatus({requestStatus: null}));
     console.error(error);
   }
 }
 
 function* getPrayersWorker(action: getPrayersAction) {
-  const { token } = action.payload;
+  const {token} = action.payload;
 
-  const { success, failure } = getPrayers;
+  const {success, failure} = getPrayers;
   try {
-    const { data: prayersArray } = yield call(Prayers.getAll, { token });
+    const {data: prayersArray} = yield call(Prayers.getAll, {token});
 
     if (prayersArray.message) {
-      yield put(failure({ message: prayersArray.message }));
+      yield put(failure({message: prayersArray.message}));
     } else {
       yield put(success(prayersArray));
     }
   } catch (error) {
-
     console.error(error);
   }
 }
 function* createPrayerWorker(action: createPrayerAction) {
-  const { token, title,
-    description,
-    checked,
-    columnId, } = action.payload;
-  const { success, failure } = createPrayer;
+  const {token, title, description, checked, columnId} = action.payload;
+  const {success, failure} = createPrayer;
   try {
-    const { data: prayer } = yield call(Prayers.create, { token, title, description, checked, columnId });
+    const {data: prayer} = yield call(Prayers.create, {
+      token,
+      title,
+      description,
+      checked,
+      columnId,
+    });
     if (prayer.id) {
-      yield put(success({ message: 'done' }));
-    }
-    else {
-      yield put(failure({ message: prayer.message }));
+      yield put(success({message: 'done'}));
+    } else {
+      yield put(failure({message: prayer.message}));
     }
   } catch (error) {
-    yield put(failure({ message: (error as Error).message }));
+    yield put(failure({message: (error as Error).message}));
   }
 }
 function* deletePrayerWorker(action: deletePrayerAction) {
-  const { token, id } = action.payload;
-  const { success, failure } = deletePrayer;
+  const {token, id} = action.payload;
+  const {success, failure} = deletePrayer;
   try {
-    const { data: response } = yield call(Prayers.delete, { token, id });
+    const {data: response} = yield call(Prayers.delete, {token, id});
     if (!response.message) {
-
-      yield put(success({ id: response.id }));
+      yield put(success({id: response.id}));
+    } else {
+      yield put(failure({message: response.message}));
     }
-    else {
-      yield put(failure({ message: response.message }));
-    }
-  }
-  catch (error) {
-    console.log('104 line', (error as Error).message)
-    yield put(failure({ message: (error as Error).message }));
+  } catch (error) {
+    console.log('104 line', (error as Error).message);
+    yield put(failure({message: (error as Error).message}));
   }
 }
 function* updatePrayerWorker(action: updatePrayerAction) {
-  const { token, checked, id, columnId, title, description } = action.payload;
-  const { success, failure } = updatePrayer;
+  const {token, checked, id, columnId, title, description} = action.payload;
+  const {success, failure} = updatePrayer;
   try {
-    const { data: response } = yield call(Prayers.update, {
+    const {data: response} = yield call(Prayers.update, {
       title,
       description,
       checked,
       id,
       columnId,
-      token
+      token,
     });
     if (!response.message) {
       yield put(success(response));
+    } else {
+      yield put(failure({message: response.message}));
     }
-    else {
-      yield put(failure({ message: response.message }));
-    }
-
-  }
-  catch (error) {
+  } catch (error) {
     console.log((error as Error).message);
-    yield put(failure({ message: (error as Error).message }));
+    yield put(failure({message: (error as Error).message}));
   }
 }
 
@@ -159,6 +167,6 @@ export default function* rootSaga() {
     prayersWatcher(),
     createPrayerWatcher(),
     deletePrayerWatcher(),
-    updatePrayerWatcher()
+    updatePrayerWatcher(),
   ]);
 }

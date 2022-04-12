@@ -6,7 +6,7 @@ import PrayerItem from '@components/PrayerItem/index';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import {useAppDispatch, useAppSelector} from 'src/redux/store';
 import {UserSelectors} from 'src/redux/User/index';
-import {deletePrayer} from 'src/redux/Prayers/index';
+import {deletePrayer, setEditedPrayer} from 'src/redux/Prayers/index';
 type PrayerListProps = {
   prayers: Array<Prayer>;
   isEdited: boolean;
@@ -31,6 +31,10 @@ const PrayerList: React.FC<PrayerListProps> = ({prayers, isEdited}) => {
     closeRow(rowMap, rowKey);
     dispatch(deletePrayer({id: data.item.id, token}));
   };
+  const editPrayer = (data: hiddenItemData) => {
+    console.log(data);
+    dispatch(setEditedPrayer({prayer: data.item}));
+  };
   useEffect(() => {
     if (prayerMessage === 'done') {
     }
@@ -38,7 +42,7 @@ const PrayerList: React.FC<PrayerListProps> = ({prayers, isEdited}) => {
   const renderItemHidden = (data: hiddenItemData, rowMap: any) => {
     return (
       <HiddenItemsContainer>
-        <EditRowButton>
+        <EditRowButton onPress={() => editPrayer(data)}>
           <EditRowText>Edit</EditRowText>
         </EditRowButton>
         <DeleteRowButton onPress={() => deleteRow(rowMap, data)}>

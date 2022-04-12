@@ -1,5 +1,5 @@
 import React from 'react';
-import {} from 'react-native';
+import {Modal} from 'react-native';
 import styled from 'styled-components/native';
 import SvgSettings from '@svg/Settings';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
@@ -9,14 +9,24 @@ import MyPrayers from '@components/MyPrayers/index';
 import SubscribedPrayers from '@components/SubscribedPrayers/index';
 import StackContext from 'src/context/RootStackContext';
 import TabStackParamList from 'src/types/TabStackParamList';
+import EditContent from './components/EditContent/index';
+import {prayersSelector} from 'src/redux/Prayers/index';
+import {useAppSelector} from 'src/redux/store';
 const Tab = createMaterialTopTabNavigator<TabStackParamList>();
 
 type TasksProps = NativeStackScreenProps<RootStackParamList, 'Tasks'>;
 
 const TaskList: React.FC<TasksProps> = ({navigation, route}) => {
+  const editedPrayer = useAppSelector(state => state.prayers.editedPrayer);
   return (
     <StackContext.Provider value={{navigation}}>
       <TaskWrapper>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={editedPrayer != null}>
+          <EditContent prayer={editedPrayer!} />
+        </Modal>
         <Header>
           <HeaderTitleWrapper>
             <HeaderTitle>{route.params.title}</HeaderTitle>

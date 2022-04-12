@@ -43,7 +43,6 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
     }
   }, [userData]);
   const onSubmit: SubmitHandler<IFormInputs> = data => {
-    console.log(data);
     dispatch(login(data));
   };
   return (

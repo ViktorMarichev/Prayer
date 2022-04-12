@@ -1,5 +1,5 @@
 import React, {ReactElement, useEffect} from 'react';
-import {TextInput} from 'react-native';
+import {TextInput, ActivityIndicator} from 'react-native';
 import styled from 'styled-components/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import RootStackParamList from 'src/types/RootStackParamList';
@@ -20,7 +20,9 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
   }
   const dispatch = useAppDispatch();
   const userData = useAppSelector(state => UserSelectors.userData(state));
-
+  const requestStatus = useAppSelector(
+    state => UserSelectors.userData(state).requestStatus,
+  );
   const {
     setError,
     control,
@@ -47,6 +49,11 @@ const AuthScreen: React.FC<AuthorizationProps> = ({navigation}) => {
   };
   return (
     <AuthScreenWrapper>
+      {requestStatus === 'BEGIN_FETCHING' ? (
+        <PreloaderWrapper>
+          <ActivityIndicator size="large" color={'#00ff00'} />
+        </PreloaderWrapper>
+      ) : null}
       <InputsContainer>
         <Title>Authorisation</Title>
         <InputsWrapper>
@@ -184,5 +191,13 @@ const RegistrationRefWrapper = styled.TouchableOpacity`
 const RegistrationRef = styled.Text`
   font-family: 'SF-UI-Text-Regular';
   color: gray;
+`;
+const PreloaderWrapper = styled.View`
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #00000026;
 `;
 export default AuthScreen;

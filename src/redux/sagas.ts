@@ -3,7 +3,7 @@ import {call, put, takeLatest, all} from 'redux-saga/effects';
 import {User} from './api/user';
 import {Columns} from './api/columns';
 import {Prayers} from './api/prayers';
-import {login} from './User/slice';
+import {login, setRequestStatus as setRequestStatusUser} from './User/index';
 import {
   getColumns,
   createColumn,
@@ -32,16 +32,17 @@ function* signInWorker(action: signInAction) {
     // запросить токен, получить его, а затем попытаться запросить данные
     const {data: authData} = yield call(User.login, {email, password});
     const {token, name, id, message} = authData;
+    yield put(setRequestStatusUser({requestStatus: 'BEGIN_FETCHING'}));
     // в случае успеха отдать данные редьюсеру
     if (message) {
       yield put(failure({message}));
+      yield put(setRequestStatusUser({requestStatus: 'END_FETCHING'}));
     } else {
+      yield put(setRequestStatusUser({requestStatus: 'END_FETCHING'}));
       yield put(success({token, email, name, id}));
     }
   } catch (error) {
-    // ошибку можно тоже отдать редьюсеру через вызов failure
-    // или получить в компоненте
-    // или вообще написать функцию-обработчик, правящую миром ошибок
+    yield put(setRequestStatusUser({requestStatus: 'END_FETCHING'}));
     console.error(error);
   }
 }

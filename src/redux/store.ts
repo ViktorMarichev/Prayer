@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import columnsReducer from './Columns/index';
 import PrayersSlice from './Prayers/index';
-import rootSaga from './sagas';
+import rootSaga from './sagas/rootSaga';
 const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
   user: UserReducer,

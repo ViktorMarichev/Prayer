@@ -30,7 +30,7 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
   const comments = useAppSelector(state =>
     commentsSelectors.getCommentsByPrayerId(state, prayerId),
   );
-  function formatDate(date: Date) {
+  const formatDate = (date: Date) => {
     let dd: string | number = date.getDate();
     if (dd < 10) dd = '0' + dd;
 
@@ -41,7 +41,30 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
     if (yy < 10) yy = '0' + yy;
 
     return dd + '.' + mm + '.' + yy;
-  }
+  };
+  const diffDaysCalculation = (date: Date) => {
+    const currentDate = new Date();
+
+    var timeDiff = Math.abs(currentDate.getTime() - date.getTime());
+    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    let diffWeeks = (currentDate.getTime() - date.getTime()) / 1000;
+    diffWeeks /= 3600 * 24 * 7;
+    diffWeeks = Math.abs(Math.round(diffWeeks));
+
+    var diffMinutes = (currentDate.getTime() - date.getTime()) / 1000;
+    diffMinutes /= 60;
+    diffMinutes = Math.abs(Math.round(diffMinutes));
+    if (diffWeeks >= 6) {
+      return formatDate(date);
+    } else if (diffWeeks != 0) {
+      return diffWeeks + ' weeks ago';
+    } else if (diffDays >= 1 && diffMinutes >= 1440) {
+      return diffDays + ' days ago';
+    } else {
+      return Math.ceil(diffMinutes) + ' minutes ago';
+    }
+  };
 
   const OnChangeCommentHandler = (
     event: NativeSyntheticEvent<TextInputChangeEventData>,
@@ -100,7 +123,7 @@ const CommentList: React.FC<CommentListProps> = ({prayerId}) => {
                   <UserNameWrapper>
                     <UserName>Anna Barber</UserName>
                     <CommentTime>
-                      {formatDate(new Date(item.created))}
+                      {diffDaysCalculation(new Date(item.created))}
                     </CommentTime>
                   </UserNameWrapper>
                   <CommentMessage>{item.body}</CommentMessage>
